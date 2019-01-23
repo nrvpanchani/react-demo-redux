@@ -1,27 +1,30 @@
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom'
-import {  Divider, Header,Container,  Image, Table, Pagination, Button, Input } from 'semantic-ui-react'
+import {  Divider, Header,Container,  Image, Table, Pagination, Button } from 'semantic-ui-react'
 import history from '../../history'
+import {connect} from 'react-redux';
 
-const BASE_URL = 'http://139.59.87.122/modtod/beta/api';
-const token = localStorage.getItem('token');
-const API = BASE_URL + '/product/productListings'
 
-export default class ProductData extends Component {
+class ProductData extends Component {
 	constructor(props){
 		super(props);
-    	if(!token)
-      		history.push({ pathname: '/', state: { error: 'Login require' } }) 
-		
 		this.state = {
 			productData : [],
 			error : '',
-			loading: false
+			loading: false,
+			authToken: this.props.token
 		}
-		this.handleChange = this.handleChange.bind(this)
 	}
 	componentDidMount(){
+		
+    	var token = localStorage.getItem('authToken')
+    	if(!token){
+      		history.push({ pathname: '/', state: { error: 'Login require' } })
+    	}
+    	console.log(token)
+    	const BASE_URL = 'http://139.59.87.122/modtod/beta/api';
 
+		const API = BASE_URL + '/product/productListings'
 		fetch(API, {
         method: 'POST',
         headers: {
@@ -35,10 +38,6 @@ export default class ProductData extends Component {
         this.setState({ productData:productData.data }) 
       });
 	}
-	handleChange(e,{value}){
-		console.log('hi')
-		
-	}
 	render() {
 		var {productData , error} = this.state
 		return (
@@ -46,7 +45,6 @@ export default class ProductData extends Component {
 				<Header size='large'>{ error ? '404 : Data Not Found' : 'Products'}</Header>
 				<Divider />
 				
-				<Input icon='search' placeholder='Search...' size='big' onChange={this.handleChange}  />
 				<Table basic='very' celled collapsing textAlign='center'>
 
 				    <Table.Header>
@@ -99,3 +97,10 @@ export default class ProductData extends Component {
 		);
 	}
 }
+
+let mapStateToProps = (state) => {
+  return {
+  token: state.auth.token,
+  };
+};
+export default connect(mapStateToProps)(ProductData);

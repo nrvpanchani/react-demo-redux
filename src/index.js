@@ -5,24 +5,27 @@ import history from './history';
 import route from './route'
 import { Route } from 'react-router-dom'
 import 'semantic-ui-css/semantic.min.css'
+import {Provider} from 'react-redux';
 
-//import ApiDemo from './structural/ApiDemo'
-//import NestedRoutes from './structural/NestedRoutes'
-//import TodoApp from './structural/TodoApp';
 import App from './structural/App';
-
+import store from './store'
+//const store = createStore(reducer);
 const target = document.querySelector('#root')
+
+
 render(
-	<Router history={history}>
-	<div>					
-  		<App />
-        {
-        	route.map((singleRoute,key)=>(
-        		<Route key={key} {...singleRoute} />
-        	))
-        }
-        </div>
-  	</Router>
+  <Provider store={store}>
+  	<Router history={history}>
+    	<div>					
+    	  <App />
+          {
+          	route.map((singleRoute,key)=>(
+          		<Route key={key} {...singleRoute} />
+          	))
+          }
+      </div>
+    </Router>
+    </Provider>
   	,
   	target
 )

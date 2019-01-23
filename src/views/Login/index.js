@@ -1,63 +1,33 @@
 import React, { Component } from 'react'
 import { Icon, Header, Button, Form, Grid, Segment } from 'semantic-ui-react'
-import history from '../../history'
-
-const BASE_URL = 'http://139.59.87.122/modtod/beta/api';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom'
+import { login } from '../../structural/actions/auth'
 
 class Login extends Component {
-    
+     
   constructor(props){
     super(props)
     this.state = {
       email : null,
       password : null,
       device_token: null,
-      os_type: null
+      os_type: null,
     }
-    
-    localStorage.clear();
     this.handleChange = this.handleInputChange.bind(this);
     this.handleSignUp = this.handleSignUp.bind(this);
   }
   handleInputChange = (e,{name,value})=>{
     this.setState({
-      [name]: value 
+      [name]: value,
+      device_token:'abcdeeeeeffffffgggghhhh',
+      os_type:1 
     });
   }
   handleSignUp = () => {
-    const { email, password } = this.state
-    const device_token = 'abcdeeeeeffffffgggghhhh'
-    const os_type = 1
-    const API = BASE_URL + '/auth/login'
-
-    if(email == null || password == null || device_token == null || os_type == null){
-      this.setState({error: 'Email / Password require'})
-    }
-    else{
-      fetch(API, {
-        method: 'POST',
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          "email": email,
-          "password": password,
-          "device_token": device_token,
-          "os_type": os_type
-        })
-      }).then((response) => {
-          return (response.ok) ? response.json() : '';
-      }).then( (data) => {
-        //console.log(data.data)
-          localStorage.setItem('user_data',JSON.stringify(data))
-          localStorage.setItem('token',data.data.authorization);
-          history.push('/dashboard')
-      });
-   }
+    this.props.actions.login(this.state)
   }
   render() {
-  	const { error } = this.state
     return (
       <Segment placeholder>
       <Grid container  columns={1} relaxed='very' stackable>
@@ -67,7 +37,7 @@ class Login extends Component {
             <Header.Content>Sign In</Header.Content>
           </Header>
           <center>
-            { error ? error : '' }
+            {this.props.error}
           </center>
           <Form className='ui form segment' onSubmit={this.handleSignUp}>
             <Form.Input 
@@ -93,7 +63,20 @@ class Login extends Component {
     );
   }
 }
-export default Login;
 
+function mapDispatchToProps (dispatch) {
+  return {
+    actions: {
+      login: (payload: Object) => dispatch(login(payload)), 
+    }
+  }
+}
+const mapStateToProps = (state) => {
+  return {
+    error: state.auth.error,
+    token: state.auth.token,
+    message: state.auth.message,
+  }
+}
 
-
+export default withRouter(connect(mapStateToProps,mapDispatchToProps)(Login))

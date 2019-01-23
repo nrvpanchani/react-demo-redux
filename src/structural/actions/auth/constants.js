@@ -1,0 +1,9 @@
+const BASE_PATH = 'app/auth'
+export const LOGIN_START = `${BASE_PATH}/LOGIN_START`
+export const PARAM_NULL = `${BASE_PATH}/PARAM_NULL`
+export const LOGIN_USER_DETAILS = `${BASE_PATH}/LOGIN_USER_DETAILS`
+export const LOGIN_SUCCESS = `${BASE_PATH}/LOGIN_SUCCESS`
+export const LOGIN_ERROR = `${BASE_PATH}/LOGIN_ERROR`
+export const INVALID_PARAM = `${BASE_PATH}/INVALID_PARAM`
+
+

@@ -2,10 +2,11 @@ import React from 'react'
 import { Container, Header, Image, Label, Icon, Card, Feed, Grid, Button, Rating } from 'semantic-ui-react'
 import TopMenu from '../../components/TopMenu'
 import history from '../../history'
+import {connect} from 'react-redux';
 import moment from 'moment'
 const BASE_URL = 'http://139.59.87.122/modtod/beta/api'
 
-export default class ViewProduct extends React.Component {
+class ViewProduct extends React.Component {
 
    constructor(props) {
     super(props)
@@ -13,15 +14,17 @@ export default class ViewProduct extends React.Component {
       productData : {},
       productImage: '',
       userDetail: {},
-      attributes: []
-
+      attributes: [],
+      authToken: this.props.token
     }
-    const token = localStorage.getItem('token');
-    if(!token)
-      history.push({ pathname: '/', state: { error: 'Login require' } }) 
+    
   }
   componentDidMount(){
-    const token = localStorage.getItem('token');
+    
+    var token = localStorage.getItem('authToken')
+    if(!token){
+      history.push({ pathname: '/', state: { error: 'Login require' } })
+    }
     const productId = this.props.location.state.productId
 
     const API = BASE_URL + '/product/detail/' + productId
@@ -41,7 +44,7 @@ export default class ViewProduct extends React.Component {
           userDetail: productData.data.user,
           attributes: productData.data.attributes
         })
-        console.log(productData.data)
+        //console.log(productData.data)
       });
 
   }
@@ -130,3 +133,11 @@ export default class ViewProduct extends React.Component {
     )
   }
 }
+
+
+let mapStateToProps = (state) => {
+  return {
+  token: state.auth.token,
+  };
+};
+export default connect(mapStateToProps)(ViewProduct);

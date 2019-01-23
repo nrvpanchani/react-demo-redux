@@ -8,6 +8,7 @@ export default class TopMenu extends React.Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
   logOut = () => {
+    this.setState({ authToken: null, error: null, message: null })
     localStorage.clear();
     history.push('/')
   }
